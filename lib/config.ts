@@ -726,6 +726,17 @@ const calculateValue = () => {
     for (const name in _value) {
         value[name] = _value[name];
     }
+
+    const _value2 = {
+        kamishiraishimone: {
+            username: envs.KAMISHIRAISHIMONE_USERNAME,
+            password: envs.KAMISHIRAISHIMONE_PASSWORD,
+        },
+    };
+
+    for (const name in _value2) {
+        value[name] = _value2[name];
+    }
 };
 calculateValue();
 
