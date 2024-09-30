@@ -17,14 +17,16 @@ const officialMailUrl = baseUrl + '/dashboard/mail_magazine_archives/815';
 const urls = { baseUrl, loginUrl, galleryUrl, radioUrl, scheduleUrl, videoUrl, newsUrl, lemoMailUrl, officialMailUrl };
 
 const MediaType = {
-    group : 'group',
-    movies : 'movies',
-    radio : 'radio',
-    unknown : 'unknown',
+    group: 'group',
+    movies: 'movies',
+    radio: 'radio',
+    unknown: 'unknown',
 };
 
 class KamishiraishimoneBrowser {
     LOGIN_CACHE_KEY = 'kamishiraishimone:cookie';
+    browser: any;
+    cache: any;
     async init(cache) {
         // 导入 puppeteer 工具类并初始化浏览器实例
         this.browser = await puppeteer();
@@ -217,4 +219,4 @@ async function sleep(ms) {
     await new Promise((r) => setTimeout(r, ms));
 }
 
-module.exports = { sleep, urls, KamishiraishimoneBrowser, MediaType };
+export { sleep, urls, KamishiraishimoneBrowser, MediaType };

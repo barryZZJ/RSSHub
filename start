@@ -1,1 +1,1 @@
-nohup npm start >/dev/null &
+nohup pnpm start >/dev/null &

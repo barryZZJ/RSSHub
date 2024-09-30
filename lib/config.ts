@@ -333,6 +333,10 @@ export type Config = {
     zsxq: {
         accessToken?: string;
     };
+    kamishiraishimone: {
+        username?: string;
+        password?: string;
+    };
 };
 
 const value: Config | Record<string, any> = {};
