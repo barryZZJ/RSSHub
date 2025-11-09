@@ -23,13 +23,23 @@ const getWrappedGet: <T extends Get>(origin: T) => T = (origin) =>
         } else {
             options = args[0];
             try {
-                url = new URL(options.href || `${options.protocol || 'http:'}//${options.hostname || options.host}${options.path}${options.search || (options.query ? `?${options.query}` : '')}`);
+                // options: {"host":"127.0.0.1","port":10809,"proxyAuth":null,"headers":{"User-Agent":"Instagram 222.0.0.13.114 Android (26/8.0.0; 480dpi; 1080x1920; samsung; SM-G935F; hero2lte; samsungexynos8890; en_US; 350696709)","Accept-Language":"en-US","Accept-Encoding":"gzip","Connection":"close","host":"i.instagram.com:443"},"method":"CONNECT","path":"i.instagram.com:443","agent":false}
+                url = options.method === 'CONNECT' ? new URL(options.href || `${options.protocol || 'http:'}//${options.hostname || options.host}:${options.port}`) : new URL(options.href || `${options.protocol || 'http:'}//${options.hostname || options.host}:${options.port}${options.path}${options.search || (options.query ? `?${options.query}` : '')}`);
             } catch {
                 url = null;
             }
             if (typeof args[1] === 'function') {
                 callback = args[1];
             }
+            // logger.error(`url: ${url}`);  // url: http://127.0.0.1i.instagram.com:443/
+            // logger.error(`options.href: ${options.href}`);  // options.href: undefined
+            // logger.error(`options.protocol: ${options.protocol}`);  // options.protocol: undefined
+            // logger.error(`options.hostname: ${options.hostname}`);  // options.hostname: undefined
+            // logger.error(`options.host: ${options.host}`);  // options.host: undefined
+            // logger.error(`options.port: ${options.port}`);  // options.port: undefined
+            // logger.error(`options.path: ${options.path}`);  // options.path: /undefined
+            // logger.error(`options.search: ${options.search}`);  // options.search: undefined
+            // logger.error(`options.query: ${options.query}`);  // options.query: undefined
         }
         if (!url) {
             return Reflect.apply(origin, this, args) as ReturnType<typeof origin>;
