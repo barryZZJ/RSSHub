@@ -130,6 +130,8 @@ type ConfigEnvKeys =
     | 'JAVDB_SESSION'
     | 'JUMEILI_COOKIE'
     | 'KEYLOL_COOKIE'
+    | 'KAMISHIRAISHIMONE_USERNAME'
+    | 'KAMISHIRAISHIMONE_PASSWORD'
     | 'LASTFM_API_KEY'
     | 'SECURITY_KEY'
     | 'LOFTER_COOKIE'
@@ -670,6 +672,10 @@ export type Config = {
     smzdm: {
         cookie?: string;
     };
+    kamishiraishimone: {
+        username?: string;
+        password?: string;
+    };
 };
 
 const value: Config | Record<string, any> = {};
@@ -1152,6 +1158,17 @@ const calculateValue = () => {
 
     for (const name in _value) {
         value[name] = _value[name];
+    }
+
+    const _value_zzj = {
+        kamishiraishimone: {
+            username: envs.KAMISHIRAISHIMONE_USERNAME,
+            password: envs.KAMISHIRAISHIMONE_PASSWORD,
+        },
+    };
+
+    for (const name in _value_zzj) {
+        value[name] = _value_zzj[name];
     }
 };
 calculateValue();

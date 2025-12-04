@@ -1,0 +1,1 @@
+nohup pnpm start >/dev/null &
