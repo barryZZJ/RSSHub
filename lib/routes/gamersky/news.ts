@@ -45,6 +45,11 @@ const idNameMap = [
         type: 'tech',
         nodeId: '20547',
     },
+    {
+        name: '每日囧图',
+        type: 'jt',
+        nodeId: '11007',
+    },
 ];
 
 export const route: Route = {
@@ -74,16 +79,26 @@ export const route: Route = {
     handler,
 };
 
+import logger from '@/utils/logger';
 async function handler(ctx: Context) {
     const type = ctx.req.param('type') ?? 'pc';
+    const limit = ctx.req.param('limit') ?? 1;
 
     const idName = idNameMap.find((item) => item.type === type);
     if (!idName) {
         throw new Error(`Invalid type: ${type}`);
     }
-
-    const response = await getArticleList(idName.nodeId);
-    const list = parseArticleList(response);
+    let filter = "";
+    if (type == 'jt') {
+        filter = "囧图";
+    }
+    let list = [];
+    for (let page = 1; page <= 10; page++) {
+        logger.info(`Fetching page ${page}...`);
+        const response = await getArticleList(idName.nodeId, page);
+        list.push(...parseArticleList(response, filter));
+        if (list.length > limit) break;
+    }
     const fullTextList = await Promise.all(list.map((item) => getArticle(item)));
     return {
         title: `${idName.name} - 游民星空`,

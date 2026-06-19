@@ -18,7 +18,7 @@ interface ArticleList {
     body: string;
 }
 
-export const getArticleList = async (nodeId) => {
+export const getArticleList = async (nodeId, page=1) => {
     const response = await ofetch<ArticleList>(
         `https://db2.gamersky.com/LabelJsonpAjax.aspx?${new URLSearchParams({
             jsondata: JSON.stringify({
@@ -27,7 +27,7 @@ export const getArticleList = async (nodeId) => {
                 cacheTime: 60,
                 nodeId,
                 isNodeId: 'true',
-                page: 1,
+                page: page,
             }),
         })}`,
         {
@@ -37,7 +37,19 @@ export const getArticleList = async (nodeId) => {
     return response.body;
 };
 
-export const parseArticleList = (response: string) => {
+function link2Mobile(url) {
+  try {
+    const u = new URL(url);
+    const m = u.pathname.match(/\/(\d+)\.s?html?$/i);
+    if (!m) return url;
+    const id = m[1];
+    return `https://m.gamersky.com/news/index.html?contentId=${id}&contentType=tieZi/xinWen`;
+  } catch (e) {
+    return url;
+  }
+}
+
+export const parseArticleList = (response: string, filter: string="") => {
     const $ = load(response);
     return $('li')
         .toArray()
@@ -45,10 +57,13 @@ export const parseArticleList = (response: string) => {
             const ele = $(item);
             const a = ele.find('.tt').length ? ele.find('.tt') : ele.find('a');
             const title = a.text();
-            const link = a.attr('href');
+            const link = link2Mobile(a.attr('href'));
             const pubDate = timezone(parseDate(ele.find('.time').text()), 8);
             const description = ele.find('.txt').text();
             if (!link) {
+                return;
+            }
+            if (filter && filter !== "" && !title.includes(filter)) {
                 return;
             }
             return {

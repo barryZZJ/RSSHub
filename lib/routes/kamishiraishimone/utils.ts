@@ -25,6 +25,7 @@ const MediaType = {
 
 class KamishiraishimoneBrowser {
     LOGIN_CACHE_KEY = 'kamishiraishimone:cookie';
+    LAST_USER_KEY = 'kamishiraishimone:last_user';
     browser: any;
     cache: any;
     async init(cache) {
@@ -150,15 +151,16 @@ class KamishiraishimoneBrowser {
 
         // logger.error('using temp cookie for debug!');
         // let cookiestr = '[{"name":"remember_user_token","value":"BAhbB1sGaQOyeWFJIiIkMmEkMTAkblpwZEUvMzgucnBveHdod1BvaXJxdQY6BkVU--87e1ec890f6a1351e96e5ec09e5e08357da87972","domain":"kamishiraishimone.com","path":"/","expires":1687942399.215908,"size":125,"httpOnly":true,"secure":true,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443}]';
-        // ! cache存在redis的话获取的结果是个Promise，在内存中则获取对象本身
+        // ! cache存在redis的话，获取的结果是个Promise；在内存中则获取对象本身
         const cacheRes = this.cache.get(this.LOGIN_CACHE_KEY, false);
         // logger.info('cached result type: ' + typeof cacheRes + ', value: ' + cacheRes);
         let cookiestr = await cacheRes;
-        logger.info('cached cookie: ' + cookiestr);
+        const lastUser = await this.cache.get(this.LAST_USER_KEY, '');
 
         const page = await this._newPage();
 
-        if (cookiestr) {
+        if (lastUser === config.kamishiraishimone.username && cookiestr) {
+            logger.info('Login using cached cookie: ' + cookiestr);
             // cache hit
             const cookies = JSON.parse(cookiestr);
             await page.setCookie(...cookies);
